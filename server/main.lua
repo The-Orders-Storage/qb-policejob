@@ -120,6 +120,7 @@ RegisterNetEvent('qb-policejob:server:stash', function()
     if Player.PlayerData.job.type ~= 'leo' then return end
     local citizenId = Player.PlayerData.citizenid
     local stashName = 'policestash_' .. citizenId
+    if GetResourceState('ox_inventory') == 'started' then return end
     exports['qb-inventory']:OpenInventory(src, stashName)
 end)
 
@@ -128,6 +129,7 @@ RegisterNetEvent('qb-policejob:server:trash', function()
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
+    if GetResourceState('ox_inventory') == 'started' then return end
     exports['qb-inventory']:OpenInventory(src, 'policetrash', {
         maxweight = 4000000,
         slots = 300,
@@ -139,6 +141,7 @@ RegisterNetEvent('qb-policejob:server:evidence', function(currentEvidence)
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
+    if GetResourceState('ox_inventory') == 'started' then return end
     exports['qb-inventory']:OpenInventory(src, currentEvidence, {
         maxweight = 4000000,
         slots = 500,

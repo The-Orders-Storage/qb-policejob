@@ -638,46 +638,69 @@ if Config.UseTarget then
             })
         end
 
-        -- Personal Stash
-        for i = 1, #Config.Locations['stash'] do
-            local v = Config.Locations['stash'][i]
-            exports['qb-target']:AddCircleZone('PoliceStash_' .. i, vector3(v.x, v.y, v.z), 1.0, {
-                name = 'PoliceStash_' .. i,
-                useZ = true,
-                debugPoly = false,
-            }, {
-                options = {
-                    {
-                        type = 'server',
-                        event = 'qb-policejob:server:stash',
-                        icon = 'fas fa-dungeon',
-                        label = Lang:t('target.open_personal_stash'),
-                        jobType = 'leo',
+        if GetResourceState("ox_inventory") ~= "started" then
+            -- Personal Stash
+            for i = 1, #Config.Locations['stash'] do
+                local v = Config.Locations['stash'][i]
+                exports['qb-target']:AddCircleZone('PoliceStash_' .. i, vector3(v.x, v.y, v.z), 1.0, {
+                    name = 'PoliceStash_' .. i,
+                    useZ = true,
+                    debugPoly = false,
+                }, {
+                    options = {
+                        {
+                            type = 'server',
+                            event = 'qb-policejob:server:stash',
+                            icon = 'fas fa-dungeon',
+                            label = Lang:t('target.open_personal_stash'),
+                            jobType = 'leo',
+                        },
                     },
-                },
-                distance = 1.5
-            })
-        end
+                    distance = 1.5
+                })
+            end
 
-        -- Police Trash
-        for i = 1, #Config.Locations['trash'] do
-            local v = Config.Locations['trash'][i]
-            exports['qb-target']:AddCircleZone('PoliceTrash_' .. i, vector3(v.x, v.y, v.z), 0.5, {
-                name = 'PoliceTrash_' .. i,
-                useZ = true,
-                debugPoly = false,
-            }, {
-                options = {
-                    {
-                        type = 'server',
-                        event = 'qb-policejob:server:trash',
-                        icon = 'fas fa-trash',
-                        label = Lang:t('target.open_trash'),
-                        jobType = 'leo',
+            -- Police Trash
+            for i = 1, #Config.Locations['trash'] do
+                local v = Config.Locations['trash'][i]
+                exports['qb-target']:AddCircleZone('PoliceTrash_' .. i, vector3(v.x, v.y, v.z), 0.5, {
+                    name = 'PoliceTrash_' .. i,
+                    useZ = true,
+                    debugPoly = false,
+                }, {
+                    options = {
+                        {
+                            type = 'server',
+                            event = 'qb-policejob:server:trash',
+                            icon = 'fas fa-trash',
+                            label = Lang:t('target.open_trash'),
+                            jobType = 'leo',
+                        },
                     },
-                },
-                distance = 1.5
-            })
+                    distance = 1.5
+                })
+            end
+
+            -- Evidence
+            for i = 1, #Config.Locations['evidence'] do
+                local v = Config.Locations['evidence'][i]
+                exports['qb-target']:AddCircleZone('PoliceEvidence_' .. i, vector3(v.x, v.y, v.z), 0.5, {
+                    name = 'PoliceEvidence_' .. i,
+                    useZ = true,
+                    debugPoly = false,
+                }, {
+                    options = {
+                        {
+                            type = 'client',
+                            event = 'police:client:EvidenceStashDrawer',
+                            icon = 'fas fa-dungeon',
+                            label = Lang:t('target.open_evidence_stash'),
+                            jobType = 'leo',
+                        },
+                    },
+                    distance = 1.5
+                })
+            end
         end
 
         -- Fingerprint
@@ -694,27 +717,6 @@ if Config.UseTarget then
                         event = 'qb-police:client:scanFingerPrint',
                         icon = 'fas fa-fingerprint',
                         label = Lang:t('target.open_fingerprint'),
-                        jobType = 'leo',
-                    },
-                },
-                distance = 1.5
-            })
-        end
-
-        -- Evidence
-        for i = 1, #Config.Locations['evidence'] do
-            local v = Config.Locations['evidence'][i]
-            exports['qb-target']:AddCircleZone('PoliceEvidence_' .. i, vector3(v.x, v.y, v.z), 0.5, {
-                name = 'PoliceEvidence_' .. i,
-                useZ = true,
-                debugPoly = false,
-            }, {
-                options = {
-                    {
-                        type = 'client',
-                        event = 'police:client:EvidenceStashDrawer',
-                        icon = 'fas fa-dungeon',
-                        label = Lang:t('target.open_evidence_stash'),
                         jobType = 'leo',
                     },
                 },
