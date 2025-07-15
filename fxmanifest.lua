@@ -5,6 +5,11 @@ author 'Kakarot'
 description 'Provides police tools, evidence, job and more functionality for players to use as a cop'
 version '1.3.5'
 
+--cummunty_bridge_edit
+dependencies {
+    'community_bridge'
+}
+
 shared_scripts {
 	'config.lua',
 	'@qb-core/shared/locale.lua',
