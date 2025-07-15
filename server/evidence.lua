@@ -92,9 +92,9 @@ RegisterNetEvent('evidence:server:ClearBlooddrops', function(blooddropList)
     end
 end)
 
-RegisterNetEvent('evidence:server:AddBlooddropToInventory', function(bloodId, bloodInfo)
+RegisterNetEvent('evidence:server:AddBlooddropToInventory', function(bloodId, bloodInfo)  --cummunty_bridge_edit
     local src = source
-    if not exports['qb-inventory']:RemoveItem(src, 'empty_evidence_bag', 1, false, 'evidence:server:AddBlooddropToInventory') then
+        if not Bridge.Inventory.RemoveItem(src, 'empty_evidence_bag', 1) then
         return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.have_evidence_bag'), 'error')
     end
     local streetName = bloodInfo.street
@@ -106,18 +106,17 @@ RegisterNetEvent('evidence:server:AddBlooddropToInventory', function(bloodId, bl
     info.description = info.description..'\n\nBlood Type: '..bloodType
     info.description = info.description..'\n\nCollected By: '..playerName
     info.description = info.description..'\n\nCollected At: '..streetName
-    if exports['qb-inventory']:AddItem(src, 'filled_evidence_bag', 1, false, info, 'evidence:server:AddBlooddropToInventory') then
-        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['filled_evidence_bag'], 'add')
+        if Bridge.Inventory.AddItem(src, 'filled_evidence_bag', 1, false, info) then
         TriggerClientEvent('evidence:client:RemoveBlooddrop', -1, bloodId)
         BloodDrops[bloodId] = nil
     end
 end)
 
-RegisterNetEvent('evidence:server:AddFingerprintToInventory', function(fingerId, fingerInfo)
+RegisterNetEvent('evidence:server:AddFingerprintToInventory', function(fingerId, fingerInfo)  --cummunty_bridge_edit
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
-    if not exports['qb-inventory']:RemoveItem(src, 'empty_evidence_bag', 1, false, 'evidence:server:AddFingerprintToInventory') then
+        if not Bridge.Inventory.RemoveItem(src, 'empty_evidence_bag', 1) then
         return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.have_evidence_bag'), 'error')
     end
     local playerName = Player.PlayerData.charinfo.firstname.." "..Player.PlayerData.charinfo.lastname
@@ -129,14 +128,13 @@ RegisterNetEvent('evidence:server:AddFingerprintToInventory', function(fingerId,
     info.description = info.description..'\n\nCollected By: '..playerName
     info.description = info.description..'\n\nCollected At: '..streetName
 
-    if exports['qb-inventory']:AddItem(src, 'filled_evidence_bag', 1, false, info, 'evidence:server:AddFingerprintToInventory') then
-        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['filled_evidence_bag'], 'add')
+        if Bridge.Inventory.AddItem(src, 'filled_evidence_bag', 1, false, info) then
         TriggerClientEvent('evidence:client:RemoveFingerprint', -1, fingerId)
         FingerDrops[fingerId] = nil
     end
 end)
 
-RegisterNetEvent('evidence:server:CreateCasing', function(weapon, coords)
+RegisterNetEvent('evidence:server:CreateCasing', function(weapon, coords)  --cummunty_bridge_edit
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
@@ -144,13 +142,9 @@ RegisterNetEvent('evidence:server:CreateCasing', function(weapon, coords)
     local weaponInfo = QBCore.Shared.Weapons[weapon]
     local serieNumber = nil
     if weaponInfo then
-        local weaponItem = Player.Functions.GetItemByName(weaponInfo['name'])
+                local weaponItem = Bridge.Weapon.GetCurrent(src)
         if weaponItem then
-            if GetResourceState("ox_inventory") == "started" then
-                serieNumber = exports.ox_inventory:GetCurrentWeapon(src).metadata.serial
-            elseif weaponItem.info and weaponItem.info ~= '' then
-                serieNumber = weaponItem.info.serie
-            end
+            serieNumber = weaponItem.metadata and weaponItem.metadata.serial or weaponItem.info and weaponItem.info.serie --cummunty_bridge_edit
         end
     end
 
@@ -166,11 +160,11 @@ RegisterNetEvent('evidence:server:ClearCasings', function(casingList)
     end
 end)
 
-RegisterNetEvent('evidence:server:AddCasingToInventory', function(casingId, casingInfo)
+RegisterNetEvent('evidence:server:AddCasingToInventory', function(casingId, casingInfo)  --cummunty_bridge_edit
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
-    if not exports['qb-inventory']:RemoveItem(src, 'empty_evidence_bag', 1, false, 'evidence:server:AddCasingToInventory') then
+        if not Bridge.Inventory.RemoveItem(src, 'empty_evidence_bag', 1) then
         return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.have_evidence_bag'), 'error')
     end
     local playerName = Player.PlayerData.charinfo.firstname.." "..Player.PlayerData.charinfo.lastname
@@ -184,12 +178,7 @@ RegisterNetEvent('evidence:server:AddCasingToInventory', function(casingId, casi
     info.description = info.description..'\n\nCollected By: '..playerName
     info.description = info.description..'\n\nCollected At: '..streetName
 
-    if exports.ox_inventory:AddItem(src, 'filled_evidence_bag', 1, info) then
-        TriggerClientEvent('evidence:client:RemoveCasing', -1, casingId)
-        casings[casingId] = nil
-    end
-    if exports['qb-inventory']:AddItem(src, 'filled_evidence_bag', 1, false, info, 'evidence:server:AddCasingToInventory') then
-        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['filled_evidence_bag'], 'add')
+        if Bridge.Inventory.AddItem(src, 'filled_evidence_bag', 1, false, info) then
         TriggerClientEvent('evidence:client:RemoveCasing', -1, casingId)
         Casings[casingId] = nil
     end
