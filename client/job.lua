@@ -1,3 +1,5 @@
+local Bridge = exports.community_bridge:Bridge() --cummunty_bridge_edit
+
 -- Variables
 local currentGarage = 0
 local inFingerprint = false
@@ -388,6 +390,10 @@ RegisterNetEvent('police:client:TakeOutVehicle', function(data)
         local vehicle = data.vehicle
         TakeOutVehicle(vehicle)
     end
+end)
+
+RegisterNetEvent('police:client:openPlayerInventory', function(targetId) --cummunty_bridge_edit
+    Bridge.Inventory.Open('player', targetId) --cummunty_bridge_edit
 end)
 
 RegisterNetEvent('police:client:EvidenceStashDrawer', function()
