@@ -227,19 +227,19 @@ QBCore.Commands.Add('clearblood', Lang:t('commands.clearblood'), {}, false, func
     end
 end)
 
+--cummunty_bridge_edit
 QBCore.Commands.Add('takedna', Lang:t('commands.takedna'), { { name = 'id', help = Lang:t('info.player_id') } }, true, function(source, args)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local OtherPlayer = QBCore.Functions.GetPlayer(tonumber(args[1]))
     if not OtherPlayer or Player.PlayerData.job.type ~= 'leo' or not Player.PlayerData.job.onduty then return end
-    if exports['qb-inventory']:RemoveItem(src, 'empty_evidence_bag', 1, false, 'qb-policejob:takedna') then
+        if Bridge.Inventory.RemoveItem(src, 'empty_evidence_bag', 1) then
         local info = {
             label = Lang:t('info.dna_sample'),
             type = 'dna',
             dnalabel = DnaHash(OtherPlayer.PlayerData.citizenid)
         }
-        if not exports['qb-inventory']:AddItem(src, 'filled_evidence_bag', 1, false, info, 'qb-policejob:takedna') then return end
-        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['filled_evidence_bag'], 'add')
+        Bridge.Inventory.AddItem(src, 'filled_evidence_bag', 1, false, info)
     else
         TriggerClientEvent('QBCore:Notify', src, Lang:t('error.have_evidence_bag'), 'error')
     end
