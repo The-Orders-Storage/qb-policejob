@@ -8,7 +8,7 @@ RegisterNetEvent('police:server:SearchPlayer', function()
     if player ~= -1 and distance < 2.5 then
         local SearchedPlayer = QBCore.Functions.GetPlayer(tonumber(player))
         if not SearchedPlayer then return end
-        TriggerClientEvent('community_bridge:client:openPlayerInventory', src, tonumber(player)) --cummunty_bridge_edit
+        TriggerClientEvent('police:client:openPlayerInventory', src, tonumber(player)) --cummunty_bridge_edit
         TriggerClientEvent('QBCore:Notify', src, Lang:t('info.cash_found', { cash = SearchedPlayer.PlayerData.money['cash'] }))
         TriggerClientEvent('QBCore:Notify', player, Lang:t('info.being_searched'))
     else
@@ -203,7 +203,7 @@ RegisterNetEvent('police:server:RobPlayer', function(playerId)
     local money = SearchedPlayer.PlayerData.money['cash']
     Player.Functions.AddMoney('cash', money, 'police-player-robbed')
     SearchedPlayer.Functions.RemoveMoney('cash', money, 'police-player-robbed')
-    TriggerClientEvent('community_bridge:client:openPlayerInventory', src, playerId) --cummunty_bridge_edit
+    TriggerClientEvent('police:client:openPlayerInventory', src, playerId) --cummunty_bridge_edit
     TriggerClientEvent('QBCore:Notify', SearchedPlayer.PlayerData.source, Lang:t('info.cash_robbed', { money = money }))
     TriggerClientEvent('QBCore:Notify', Player.PlayerData.source, Lang:t('info.stolen_money', { stolen = money }))
 end)
