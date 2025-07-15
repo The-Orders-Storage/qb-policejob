@@ -1,4 +1,5 @@
--- Variables
+--cummunty_bridge_edit
+local Bridge = exports.community_bridge:Bridge()
 QBCore = exports['qb-core']:GetCoreObject()
 local updatingCops = false
 
@@ -113,39 +114,32 @@ AddEventHandler('onResourceStart', function(resourceName)
     end
 end)
 
-RegisterNetEvent('qb-policejob:server:stash', function()
+RegisterNetEvent('qb-policejob:server:stash', function() --cummunty_bridge_edit
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
     local citizenId = Player.PlayerData.citizenid
-    local stashName = 'policestash_' .. citizenId
-    if GetResourceState('ox_inventory') == 'started' then return end
-    exports['qb-inventory']:OpenInventory(src, stashName)
+    local stashId = 'policestash_' .. citizenId
+    local stashLabel = Lang:t('info.stash', {value = citizenId})
+    Bridge.Inventory.OpenStash(src, stashId, stashLabel, 100, 4000000, citizenId)
 end)
 
-RegisterNetEvent('qb-policejob:server:trash', function()
+RegisterNetEvent('qb-policejob:server:trash', function() --cummunty_bridge_edit
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
-    if GetResourceState('ox_inventory') == 'started' then return end
-    exports['qb-inventory']:OpenInventory(src, 'policetrash', {
-        maxweight = 4000000,
-        slots = 300,
-    })
+    Bridge.Inventory.OpenStash(src, 'policetrash', 'Police Trash', 300, 4000000, nil, { Player.PlayerData.job.name })
 end)
 
-RegisterNetEvent('qb-policejob:server:evidence', function(currentEvidence)
+RegisterNetEvent('qb-policejob:server:evidence', function(currentEvidence) --cummunty_bridge_edit
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
-    if GetResourceState('ox_inventory') == 'started' then return end
-    exports['qb-inventory']:OpenInventory(src, currentEvidence, {
-        maxweight = 4000000,
-        slots = 500,
-    })
+    local evidenceLabel = Lang:t('info.evidence_stash', {value = currentEvidence})
+    Bridge.Inventory.OpenStash(src, currentEvidence, evidenceLabel, 500, 4000000, nil, { Player.PlayerData.job.name })
 end)
 
 RegisterNetEvent('police:server:policeAlert', function(text)
@@ -271,6 +265,6 @@ QBCore.Functions.CreateUseableItem('moneybag', function(source, item)
     if not Player then return end
     if not Player.Functions.GetItemByName('moneybag') or not item.info or item.info == '' then return end
     if not Player.PlayerData.job.type == 'leo' then return end
-    if not exports['qb-inventory']:RemoveItem(src, 'moneybag', 1, item.slot, 'qb-policejob:moneybag') then return end
+        if not Bridge.Inventory.RemoveItem(src, 'moneybag', 1, item.slot) then return end --cummunty_bridge_edit
     Player.Functions.AddMoney('cash', tonumber(item.info.cash), 'qb-policejob:moneybag')
 end)
