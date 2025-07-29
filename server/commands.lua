@@ -190,11 +190,11 @@ QBCore.Commands.Add('fine', Lang:t('commands.fine'), { { name = 'id', help = Lan
     if billed.Functions.RemoveMoney('bank', amount, 'paid-fine') then
         TriggerClientEvent('QBCore:Notify', source, Lang:t('info.fine_issued'), 'success')
         TriggerClientEvent('QBCore:Notify', billed.PlayerData.source, Lang:t('info.received_fine'))
-        exports['qb-banking']:AddMoney(biller.PlayerData.job.name, amount, 'Fine')
+        AddBanking(biller.PlayerData.job.name, amount, 'Fine')
     elseif billed.Functions.RemoveMoney('cash', amount, 'paid-fine') then
         TriggerClientEvent('QBCore:Notify', source, Lang:t('info.fine_issued'), 'success')
         TriggerClientEvent('QBCore:Notify', billed.PlayerData.source, Lang:t('info.received_fine'))
-        exports['qb-banking']:AddMoney(biller.PlayerData.job.name, amount, 'Fine')
+        AddBanking(biller.PlayerData.job.name, amount, 'Fine')        
     else
         MySQL.Async.insert('INSERT INTO phone_invoices (citizenid, amount, society, sender, sendercitizenid) VALUES (?, ?, ?, ?, ?)', { billed.PlayerData.citizenid, amount, biller.PlayerData.job.name, biller.PlayerData.charinfo.firstname, biller.PlayerData.citizenid }, function(id)
             if id then
@@ -232,14 +232,13 @@ QBCore.Commands.Add('takedna', Lang:t('commands.takedna'), { { name = 'id', help
     local Player = QBCore.Functions.GetPlayer(src)
     local OtherPlayer = QBCore.Functions.GetPlayer(tonumber(args[1]))
     if not OtherPlayer or Player.PlayerData.job.type ~= 'leo' or not Player.PlayerData.job.onduty then return end
-    if exports['qb-inventory']:RemoveItem(src, 'empty_evidence_bag', 1, false, 'qb-policejob:takedna') then
+    if RemoveItem(src, 'empty_evidence_bag', 1, false, 'qb-policejob:takedna') then
         local info = {
             label = Lang:t('info.dna_sample'),
             type = 'dna',
             dnalabel = DnaHash(OtherPlayer.PlayerData.citizenid)
         }
-        if not exports['qb-inventory']:AddItem(src, 'filled_evidence_bag', 1, false, info, 'qb-policejob:takedna') then return end
-        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['filled_evidence_bag'], 'add')
+        if not AddItem(src, 'filled_evidence_bag', 1, false, info, 'qb-policejob:takedna') then return end
     else
         TriggerClientEvent('QBCore:Notify', src, Lang:t('error.have_evidence_bag'), 'error')
     end

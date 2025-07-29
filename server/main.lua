@@ -120,8 +120,10 @@ RegisterNetEvent('qb-policejob:server:stash', function()
     if Player.PlayerData.job.type ~= 'leo' then return end
     local citizenId = Player.PlayerData.citizenid
     local stashName = 'policestash_' .. citizenId
-    if GetResourceState('ox_inventory') == 'started' then return end
-    exports['qb-inventory']:OpenInventory(src, stashName)
+    OpenInventory(src, stashName, {
+        maxweight = 4000000,
+        slots = 30,
+    })
 end)
 
 RegisterNetEvent('qb-policejob:server:trash', function()
@@ -129,10 +131,10 @@ RegisterNetEvent('qb-policejob:server:trash', function()
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
-    if GetResourceState('ox_inventory') == 'started' then return end
-    exports['qb-inventory']:OpenInventory(src, 'policetrash', {
+
+    OpenInventory(src, 'policetrash', {
         maxweight = 4000000,
-        slots = 300,
+        slots = 30,
     })
 end)
 
@@ -141,10 +143,10 @@ RegisterNetEvent('qb-policejob:server:evidence', function(currentEvidence)
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
     if Player.PlayerData.job.type ~= 'leo' then return end
-    if GetResourceState('ox_inventory') == 'started' then return end
-    exports['qb-inventory']:OpenInventory(src, currentEvidence, {
+
+    OpenInventory(src, currentEvidence, {
         maxweight = 4000000,
-        slots = 500,
+        slots = 50,
     })
 end)
 
@@ -271,6 +273,6 @@ QBCore.Functions.CreateUseableItem('moneybag', function(source, item)
     if not Player then return end
     if not Player.Functions.GetItemByName('moneybag') or not item.info or item.info == '' then return end
     if not Player.PlayerData.job.type == 'leo' then return end
-    if not exports['qb-inventory']:RemoveItem(src, 'moneybag', 1, item.slot, 'qb-policejob:moneybag') then return end
+    if not RemoveItem(src, 'moneybag', 1, item.slot, 'qb-policejob:moneybag') then return end
     Player.Functions.AddMoney('cash', tonumber(item.info.cash), 'qb-policejob:moneybag')
 end)

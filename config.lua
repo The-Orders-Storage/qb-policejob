@@ -1,5 +1,6 @@
 Config = {}
 Config.UseTarget = GetConvar('UseTarget', 'false') == 'true'
+
 Config.MaxSpikes = 5
 Config.HandCuffItem = 'handcuffs'
 Config.LicenseRank = 2
@@ -36,7 +37,8 @@ Config.Locations = {
         vector4(-455.39, 6002.02, 31.34, 87.93),
     },
     stash = {
-        vector3(453.075, -980.124, 30.889),
+        vector3(455.1456, -985.462, 30.689),
+        -- vector3(453.075, -980.124, 30.889),
     },
     impound = {
         vector3(436.68, -1007.42, 27.32),
@@ -55,7 +57,7 @@ Config.Locations = {
     evidence = {
         vector3(442.1722, -996.067, 30.689),
         vector3(451.7031, -973.232, 30.689),
-        vector3(455.1456, -985.462, 30.689),
+        
     },
     stations = {
         { label = 'Police Station',        coords = vector4(428.23, -984.28, 29.76, 3.5) },

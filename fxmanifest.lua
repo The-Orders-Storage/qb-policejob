@@ -16,6 +16,7 @@ client_scripts {
 	'@PolyZone/client.lua',
 	'@PolyZone/BoxZone.lua',
 	'@PolyZone/ComboZone.lua',
+	'bridge/client.lua',
 	'client/main.lua',
 	'client/camera.lua',
 	'client/interactions.lua',
@@ -29,6 +30,7 @@ client_scripts {
 
 server_scripts {
 	'@oxmysql/lib/MySQL.lua',
+	'bridge/server.lua',
 	'server/main.lua',
 	'server/commands.lua',
 	'server/interactions.lua',
@@ -47,4 +49,9 @@ files {
 	'html/fingerprint.png',
 	'html/main.css',
 	'html/vcr-ocd.ttf'
+}
+
+dependencies = {
+	'qb-core',
+	'community_bridge',
 }

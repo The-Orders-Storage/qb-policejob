@@ -141,7 +141,7 @@ RegisterNetEvent('police:client:JailPlayer', function()
     local player, distance = QBCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
-        local dialog = exports['qb-input']:ShowInput({
+        local dialog = ShowInput({
             header = Lang:t('info.jail_time_input'),
             submitText = Lang:t('info.submit'),
             inputs = {
@@ -152,8 +152,9 @@ RegisterNetEvent('police:client:JailPlayer', function()
                     isRequired = true
                 }
             }
-        })
-        if tonumber(dialog['jailtime']) > 0 then
+        }) 
+
+        if dialog and tonumber(dialog['jailtime']) > 0 then
             TriggerServerEvent('police:server:JailPlayer', playerId, tonumber(dialog['jailtime']))
         else
             QBCore.Functions.Notify(Lang:t('error.time_higher'), 'error')
@@ -167,7 +168,7 @@ RegisterNetEvent('police:client:BillPlayer', function()
     local player, distance = QBCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
-        local dialog = exports['qb-input']:ShowInput({
+        local dialog = ShowInput({
             header = Lang:t('info.bill'),
             submitText = Lang:t('info.submit'),
             inputs = {
@@ -179,7 +180,7 @@ RegisterNetEvent('police:client:BillPlayer', function()
                 }
             }
         })
-        if tonumber(dialog['bill']) > 0 then
+        if dialog and tonumber(dialog['bill']) > 0 then
             TriggerServerEvent('police:server:BillPlayer', playerId, tonumber(dialog['bill']))
         else
             QBCore.Functions.Notify(Lang:t('error.amount_higher'), 'error')

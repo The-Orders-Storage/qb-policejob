@@ -124,7 +124,7 @@ function TakeOutImpound(vehicle)
             exports[Config.FuelResource]:SetFuel(veh, vehicle.fuel)
             doCarDamage(veh, vehicle)
             TriggerServerEvent('police:server:TakeOutImpound', vehicle.plate, currentGarage)
-            closeMenuFull()
+            -- closeMenuFull()
             TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
             TriggerEvent('vehiclekeys:client:SetOwner', QBCore.Functions.GetPlate(veh))
             SetVehicleEngineOn(veh, true, true, true)
@@ -141,7 +141,7 @@ function TakeOutVehicle(vehicleInfo)
             SetVehicleNumberPlateText(veh, Lang:t('info.police_plate') .. tostring(math.random(1000, 9999)))
             SetEntityHeading(veh, coords.w)
             exports[Config.FuelResource]:SetFuel(veh, 100.0)
-            closeMenuFull()
+            -- closeMenuFull()
             if Config.VehicleSettings[vehicleInfo] ~= nil then
                 if Config.VehicleSettings[vehicleInfo].extras ~= nil then
                     QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
@@ -185,15 +185,8 @@ function MenuGarage(currentSelection)
         end
     end
 
-    vehicleMenu[#vehicleMenu + 1] = {
-        header = Lang:t('menu.close'),
-        txt = '',
-        params = {
-            event = 'qb-menu:client:closeMenu'
-        }
 
-    }
-    exports['qb-menu']:openMenu(vehicleMenu)
+    OpenMenu(vehicleMenu)
 end
 
 function MenuImpound(currentSelection)
@@ -204,45 +197,26 @@ function MenuImpound(currentSelection)
         }
     }
     QBCore.Functions.TriggerCallback('police:GetImpoundedVehicles', function(result)
-        local shouldContinue = false
-        if result == nil then
-            QBCore.Functions.Notify(Lang:t('error.no_impound'), 'error', 5000)
-        else
-            shouldContinue = true
-            for _, v in pairs(result) do
-                local enginePercent = QBCore.Shared.Round(v.engine / 10, 0)
-                local currentFuel = v.fuel
-                local vname = QBCore.Shared.Vehicles[v.vehicle].name
+        if not result then return QBCore.Functions.Notify(Lang:t('error.no_impound'), 'error', 5000) end
+        for _, v in pairs(result) do
+            local enginePercent = QBCore.Shared.Round(v.engine / 10, 0)
+            local currentFuel = v.fuel
+            local vname = QBCore.Shared.Vehicles[v.vehicle].name
 
-                impoundMenu[#impoundMenu + 1] = {
-                    header = vname .. ' [' .. v.plate .. ']',
-                    txt = Lang:t('info.vehicle_info', { value = enginePercent, value2 = currentFuel }),
-                    params = {
-                        event = 'police:client:TakeOutImpound',
-                        args = {
-                            vehicle = v,
-                            currentSelection = currentSelection
-                        }
+            impoundMenu[#impoundMenu + 1] = {
+                header = vname .. ' [' .. v.plate .. ']',
+                txt = Lang:t('info.vehicle_info', { value = enginePercent, value2 = currentFuel }),
+                params = {
+                    event = 'police:client:TakeOutImpound',
+                    args = {
+                        vehicle = v,
+                        currentSelection = currentSelection
                     }
                 }
-            end
-        end
-
-        if shouldContinue then
-            impoundMenu[#impoundMenu + 1] = {
-                header = Lang:t('menu.close'),
-                txt = '',
-                params = {
-                    event = 'qb-menu:client:closeMenu'
-                }
             }
-            exports['qb-menu']:openMenu(impoundMenu)
         end
+        OpenMenu(impoundMenu)
     end)
-end
-
-function closeMenuFull()
-    exports['qb-menu']:closeMenu()
 end
 
 --NUI Callbacks
@@ -404,7 +378,7 @@ RegisterNetEvent('police:client:EvidenceStashDrawer', function()
     if not takeLoc then return end
 
     if #(pos - takeLoc) <= 1.0 then
-        local drawer = exports['qb-input']:ShowInput({
+        local drawer = ShowInput({
             header = Lang:t('info.evidence_stash', { value = currentEvidence }),
             submitText = 'open',
             inputs = {
@@ -420,8 +394,6 @@ RegisterNetEvent('police:client:EvidenceStashDrawer', function()
             if not drawer.slot then return end
             TriggerServerEvent('qb-policejob:server:evidence', Lang:t('info.current_evidence', { value = currentEvidence, value2 = drawer.slot }))
         end
-    else
-        exports['qb-menu']:closeMenu()
     end
 end)
 
@@ -454,7 +426,7 @@ RegisterNetEvent('qb-police:client:spawnHelicopter', function(k)
             SetVehicleNumberPlateText(veh, 'ZULU' .. tostring(math.random(1000, 9999)))
             SetEntityHeading(veh, coords.w)
             exports[Config.FuelResource]:SetFuel(veh, 100.0)
-            closeMenuFull()
+            -- closeMenuFull()
             TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
             TriggerEvent('vehiclekeys:client:SetOwner', QBCore.Functions.GetPlate(veh))
             SetVehicleEngineOn(veh, true, true)
@@ -620,7 +592,7 @@ if Config.UseTarget then
         -- Toggle Duty
         for i = 1, #Config.Locations['duty'] do
             local v = Config.Locations['duty'][i]
-            exports['qb-target']:AddCircleZone('PoliceDuty_' .. i, vector3(v.x, v.y, v.z), 0.5, {
+            AddCircleZone('PoliceDuty_' .. i, vector3(v.x, v.y, v.z), 0.5, {
                 name = 'PoliceDuty_' .. i,
                 useZ = true,
                 debugPoly = false,
@@ -638,75 +610,74 @@ if Config.UseTarget then
             })
         end
 
-        if GetResourceState("ox_inventory") ~= "started" then
-            -- Personal Stash
-            for i = 1, #Config.Locations['stash'] do
-                local v = Config.Locations['stash'][i]
-                exports['qb-target']:AddCircleZone('PoliceStash_' .. i, vector3(v.x, v.y, v.z), 1.0, {
-                    name = 'PoliceStash_' .. i,
-                    useZ = true,
-                    debugPoly = false,
-                }, {
-                    options = {
-                        {
-                            type = 'server',
-                            event = 'qb-policejob:server:stash',
-                            icon = 'fas fa-dungeon',
-                            label = Lang:t('target.open_personal_stash'),
-                            jobType = 'leo',
-                        },
+        -- Personal Stash
+        for i = 1, #Config.Locations['stash'] do
+            local v = Config.Locations['stash'][i]
+            AddCircleZone('PoliceStash_' .. i, vector3(v.x, v.y, v.z), 1.0, {
+                name = 'PoliceStash_' .. i,
+                useZ = true,
+                debugPoly = false,
+            }, {
+                options = {
+                    {
+                        type = 'server',
+                        event = 'qb-policejob:server:stash',
+                        icon = 'fas fa-dungeon',
+                        label = Lang:t('target.open_personal_stash'),
+                        jobType = 'leo',
                     },
-                    distance = 1.5
-                })
-            end
-
-            -- Police Trash
-            for i = 1, #Config.Locations['trash'] do
-                local v = Config.Locations['trash'][i]
-                exports['qb-target']:AddCircleZone('PoliceTrash_' .. i, vector3(v.x, v.y, v.z), 0.5, {
-                    name = 'PoliceTrash_' .. i,
-                    useZ = true,
-                    debugPoly = false,
-                }, {
-                    options = {
-                        {
-                            type = 'server',
-                            event = 'qb-policejob:server:trash',
-                            icon = 'fas fa-trash',
-                            label = Lang:t('target.open_trash'),
-                            jobType = 'leo',
-                        },
-                    },
-                    distance = 1.5
-                })
-            end
-
-            -- Evidence
-            for i = 1, #Config.Locations['evidence'] do
-                local v = Config.Locations['evidence'][i]
-                exports['qb-target']:AddCircleZone('PoliceEvidence_' .. i, vector3(v.x, v.y, v.z), 0.5, {
-                    name = 'PoliceEvidence_' .. i,
-                    useZ = true,
-                    debugPoly = false,
-                }, {
-                    options = {
-                        {
-                            type = 'client',
-                            event = 'police:client:EvidenceStashDrawer',
-                            icon = 'fas fa-dungeon',
-                            label = Lang:t('target.open_evidence_stash'),
-                            jobType = 'leo',
-                        },
-                    },
-                    distance = 1.5
-                })
-            end
+                },
+                distance = 1.5
+            })             
         end
+
+        -- Police Trash
+        for i = 1, #Config.Locations['trash'] do
+            local v = Config.Locations['trash'][i]
+            AddCircleZone('PoliceTrash_' .. i, vector3(v.x, v.y, v.z), 0.5, {
+                name = 'PoliceTrash_' .. i,
+                useZ = true,
+                debugPoly = false,
+            }, {
+                options = {
+                    {
+                        type = 'server',
+                        event = 'qb-policejob:server:trash',
+                        icon = 'fas fa-trash',
+                        label = Lang:t('target.open_trash'),
+                        jobType = 'leo',
+                    },
+                },
+                distance = 1.5
+            })
+        end
+
+        -- Evidence
+        for i = 1, #Config.Locations['evidence'] do
+            local v = Config.Locations['evidence'][i]
+            AddCircleZone('PoliceEvidence_' .. i, vector3(v.x, v.y, v.z), 0.5, {
+                name = 'PoliceEvidence_' .. i,
+                useZ = true,
+                debugPoly = false,
+            }, {
+                options = {
+                    {
+                        type = 'client',
+                        event = 'police:client:EvidenceStashDrawer',
+                        icon = 'fas fa-dungeon',
+                        label = Lang:t('target.open_evidence_stash'),
+                        jobType = 'leo',
+                    },
+                },
+                distance = 1.5
+            })
+        end
+
 
         -- Fingerprint
         for i = 1, #Config.Locations['fingerprint'] do
             local v = Config.Locations['fingerprint'][i]
-            exports['qb-target']:AddCircleZone('PoliceFingerprint_' .. i, vector3(v.x, v.y, v.z), 0.5, {
+            AddCircleZone('PoliceFingerprint_' .. i, vector3(v.x, v.y, v.z), 0.5, {
                 name = 'PoliceFingerprint_' .. i,
                 useZ = true,
                 debugPoly = false,
@@ -929,7 +900,7 @@ CreateThread(function()
                             currentSelection = i
                         end
                     end
-                    exports['qb-menu']:showHeader({
+                    OpenMenu({
                         {
                             header = Lang:t('menu.pol_impound'),
                             params = {
@@ -944,7 +915,6 @@ CreateThread(function()
             end
         else
             inImpound = false
-            exports['qb-menu']:closeMenu()
             exports['qb-core']:HideText()
         end
     end)
@@ -954,12 +924,13 @@ CreateThread(function()
     for i = 1, #Config.Locations['vehicle'] do
         local v = Config.Locations['vehicle'][i]
         garageZones[#garageZones + 1] = BoxZone:Create(
-            vector3(v.x, v.y, v.z), 3, 3, {
+            vector3(v.x, v.y, v.z), 5, 5, {
                 name = 'box_zone',
                 debugPoly = false,
                 minZ = v.z - 1,
                 maxZ = v.z + 1,
-            })
+            }
+        )
     end
 
     local garageCombo = ComboZone:Create(garageZones, { name = 'garageCombo', debugPoly = false })
@@ -979,7 +950,7 @@ CreateThread(function()
                             currentSelection = i
                         end
                     end
-                    exports['qb-menu']:showHeader({
+                    OpenMenu({
                         {
                             header = Lang:t('menu.pol_garage'),
                             params = {
@@ -994,7 +965,6 @@ CreateThread(function()
             end
         else
             inGarage = false
-            exports['qb-menu']:closeMenu()
             exports['qb-core']:HideText()
         end
     end)
